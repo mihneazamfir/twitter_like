@@ -7,12 +7,14 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields=['username', 'password', 'last_name', 'first_name', 'email', 'follows']
-        extra_kwargs = {'password': {'write-only': True, 'min_length': 8}}
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
         
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
         
 class PostSerializer(serializers.ModelSerializer):
+    
+    author = serializers.ReadOnlyField(source='author.username')
     
     class Meta:
         model = Post
@@ -30,12 +32,12 @@ class LikeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Like
-        fields = ['id', 'post', 'user']
+        fields = ['id', 'post', 'author']
         read_only_fields = ['id']
         
 class CommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'post', 'user']
+        fields = ['id', 'text', 'post', 'author']
         read_only_fields = ['id']
