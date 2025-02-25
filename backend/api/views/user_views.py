@@ -64,3 +64,23 @@ def unfollowUser(request, username):
     
     author.follows.remove(target)
     return Response({"message": "User unfollowed."}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getUserFollows(request, username):
+    user = User.objects.get(username=username)
+    if not user:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    follows = user.follows.all()
+    serializer = UserSerializer(follows, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getUserFollowers(request, username):
+    user = User.objects.get(username=username)
+    if not user:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    followers = user.followers.all()
+    serializer = UserSerializer(followers, many=True)
+    return Response(serializer.data)
